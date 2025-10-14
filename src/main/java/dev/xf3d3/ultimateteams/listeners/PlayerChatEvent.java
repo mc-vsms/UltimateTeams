@@ -19,15 +19,36 @@ public class PlayerChatEvent implements Listener {
         this.plugin = plugin;
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerChat(AsyncPlayerChatEvent event) {
         Player player = event.getPlayer();
 
+        // Handle team chat
         if (plugin.getUsersStorageUtil().getChatPlayers().containsKey(player.getUniqueId())) {
             event.setCancelled(true);
-
             sendToAlternateChat(player, event.getMessage());
+            return;
         }
+
+        // Format regular chat with team prefix
+        plugin.getTeamStorageUtil().findTeamByMember(player.getUniqueId()).ifPresent(team -> {
+            String prefix = team.getPrefix();
+            if (prefix != null && !prefix.isEmpty()) {
+                String coloredPrefix = Utils.Color(prefix);
+
+                // Get player name (nickname if EssentialsX is available)
+                String playerName;
+                if (plugin.getEssentialsHook() != null) {
+                    playerName = plugin.getEssentialsHook().getDisplayName(player);
+                } else {
+                    playerName = player.getName();
+                }
+
+                // Set chat format: [prefix]<username> message
+                // %1$s = player display name, %2$s = message
+                event.setFormat(Utils.Color(coloredPrefix + "&f<" + playerName + "&f> %2$s"));
+            }
+        });
     }
 
     private void sendToAlternateChat(Player player, String message) {

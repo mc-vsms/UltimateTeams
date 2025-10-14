@@ -68,6 +68,9 @@ public class TeamPrefixSubCommand {
                         plugin.runAsync(task -> plugin.getTeamStorageUtil().updateTeamData(player, team));
 
                         sender.sendMessage(Utils.Color(messagesConfig.getString("team-prefix-change-successful")).replace("%TEAMPREFIX%", prefix));
+
+                        // Update tab list for all team members (scheduled internally for Folia compatibility)
+                        plugin.getTabListManager().updateTeamTabList(team);
                     },
                     () -> sender.sendMessage(Utils.Color(messagesConfig.getString("not-in-team")))
             );

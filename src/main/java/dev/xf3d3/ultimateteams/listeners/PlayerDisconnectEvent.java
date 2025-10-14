@@ -22,6 +22,9 @@ public class PlayerDisconnectEvent implements Listener {
     public void onPlayerQuit(PlayerQuitEvent event) {
         final Player player = event.getPlayer();
 
+        // Clean up tab list scoreboard team
+        plugin.getTabListManager().cleanupPlayerTeam(player);
+
         plugin.getUsersStorageUtil().removePlayer(player.getUniqueId());
         plugin.getUsersStorageUtil().getOnlineUserMap().remove(player.getUniqueId());
 

@@ -4,6 +4,11 @@ plugins {
     id("java")
 }
 
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
 group = "dev.xf3d3"
 version = "4.6.2"
 
@@ -19,8 +24,9 @@ repositories {
     maven("https://repo.opencollab.dev/main/")
     maven("https://mvn-repo.arim.space/lesser-gpl3/")
     maven("https://repo.aikar.co/content/groups/aikar/")
-    maven ("https://repo.tcoded.com/releases")
-    maven ("https://repo.minebench.de/")
+    maven("https://repo.tcoded.com/releases")
+    maven("https://repo.minebench.de/")
+    maven("https://repo.essentialsx.net/releases/")
 }
 
 tasks {
@@ -49,6 +55,9 @@ dependencies {
     compileOnly("org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT")
     compileOnly("me.clip:placeholderapi:2.11.6")
     compileOnly("org.geysermc.floodgate:api:2.2.4-SNAPSHOT")
+    compileOnly("net.essentialsx:EssentialsX:2.20.1") {
+        exclude(group = "org.spigotmc", module = "spigot-api")
+    }
     implementation("org.bstats:bstats-bukkit:3.1.0")
     implementation("de.themoep:inventorygui:1.6.5-SNAPSHOT")
     

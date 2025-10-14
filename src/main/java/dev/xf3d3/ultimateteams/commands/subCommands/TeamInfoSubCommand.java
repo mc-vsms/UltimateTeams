@@ -155,6 +155,12 @@ public class TeamInfoSubCommand {
             teamInfo.append(Utils.Color(messagesConfig.getString("team-home-set-false")));
         }
         teamInfo.append(" ");
+        if (team.isPublic()) {
+            teamInfo.append(Utils.Color(messagesConfig.getString("team-public-status-enabled")));
+        } else {
+            teamInfo.append(Utils.Color(messagesConfig.getString("team-public-status-disabled")));
+        }
+        teamInfo.append(" ");
         teamInfo.append(Utils.Color(messagesConfig.getString("team-info-footer")));
 
         return teamInfo.toString();

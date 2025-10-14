@@ -171,6 +171,16 @@ public class TeamCommand extends BaseCommand {
     }
 
 
+    // TEAM JOIN (for public teams)
+    @Subcommand("join")
+    @CommandCompletion("@teams @nothing")
+    @Syntax("<teamName>")
+    @CommandPermission("ultimateteams.team.join")
+    public void onTeamJoinCommand(@NotNull CommandSender sender, @Values("@teams") String teamName) {
+        new TeamJoinSubCommand(plugin).teamJoinSubCommand(sender, teamName);
+    }
+
+
     // TEAM HOME
     @Subcommand("sethome")
     @CommandCompletion("@nothing")
@@ -201,6 +211,14 @@ public class TeamCommand extends BaseCommand {
     @CommandPermission("ultimateteams.team.pvp")
     public void onTeamPvPCommand(@NotNull CommandSender sender) {
         new TeamPvpSubCommand(plugin).teamPvpSubCommand(sender);
+    }
+
+    // TEAM PUBLIC
+    @Subcommand("public")
+    @CommandCompletion("@nothing")
+    @CommandPermission("ultimateteams.team.public")
+    public void onTeamPublicCommand(@NotNull CommandSender sender) {
+        new TeamPublicSubCommand(plugin).teamPublicSubCommand(sender);
     }
 
 

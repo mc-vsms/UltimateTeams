@@ -57,6 +57,11 @@ public class TeamKickSubCommand {
 
                     String playerKickedMessage = Utils.Color(messagesConfig.getString("team-member-kick-successful")).replace(PLAYER_TO_KICK, offlinePlayer.getName());
                     player.sendMessage(playerKickedMessage);
+
+                    // Update tab list for the kicked player if online (scheduled internally for Folia compatibility)
+                    if (offlinePlayer.isOnline() && offlinePlayer.getPlayer() != null) {
+                        plugin.getTabListManager().updatePlayerTabList(offlinePlayer.getPlayer());
+                    }
                 },
                 () -> player.sendMessage(Utils.Color(messagesConfig.getString("not-in-team")))
         );

@@ -24,7 +24,12 @@ public class TeamListSubCommand {
             } else {
                 teamsString.append(Utils.Color(messagesConfig.getString("teams-list-header") + "\n"));
 
-                plugin.getTeamStorageUtil().getTeams().forEach(team -> teamsString.append(Utils.Color(team.getName() + "&r\n")));
+                plugin.getTeamStorageUtil().getTeams().forEach(team -> {
+                    String publicIndicator = team.isPublic() ?
+                        Utils.Color(messagesConfig.getString("team-list-public-indicator")) :
+                        Utils.Color(messagesConfig.getString("team-list-private-indicator"));
+                    teamsString.append(Utils.Color(team.getName() + " " + publicIndicator + "&r\n"));
+                });
 
                 teamsString.append(" ");
                 teamsString.append(Utils.Color(messagesConfig.getString("teams-list-footer")));

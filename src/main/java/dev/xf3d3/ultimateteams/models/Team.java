@@ -50,6 +50,11 @@ public class Team {
     @Getter @Setter
     private boolean friendlyFire = false;
 
+    @Expose
+    @Builder.Default
+    @Getter @Setter
+    private boolean isPublic = false;
+
     @Nullable
     @Expose
     @Builder.Default
@@ -58,7 +63,7 @@ public class Team {
 
     @Expose
     @Builder.Default
-    @Getter @Setter
+    @Setter
     private EnumSet<Permission> permissions = EnumSet.noneOf(Permission.class);
 
     @NotNull

@@ -15,6 +15,7 @@ import dev.xf3d3.ultimateteams.config.Settings;
 import dev.xf3d3.ultimateteams.config.TeamsGui;
 import dev.xf3d3.ultimateteams.database.*;
 import dev.xf3d3.ultimateteams.hooks.*;
+import dev.xf3d3.ultimateteams.listeners.EssentialsNicknameChangeEvent;
 import dev.xf3d3.ultimateteams.listeners.PlayerChatEvent;
 import dev.xf3d3.ultimateteams.listeners.PlayerConnectEvent;
 import dev.xf3d3.ultimateteams.listeners.PlayerDamageEvent;
@@ -76,12 +77,14 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonU
     private TeamInviteUtil teamInviteUtil;
     private FloodgateHook floodgateHook;
     private UpdateCheck updateChecker;
+    private TabListManager tabListManager;
 
     @Getter private HuskHomesHook huskHomesHook;
     @Getter private Utils utils;
     @Getter private Settings settings;
     @Getter private TeamsGui teamsGui;
     @Getter @Nullable private VaultHook economyHook;
+    @Getter @Nullable private EssentialsHook essentialsHook;
 
     // HashMaps
     private final ConcurrentHashMap<String, Player> bedrockPlayers = new ConcurrentHashMap<>();
@@ -111,6 +114,7 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonU
         this.teamInviteUtil = new TeamInviteUtil(this);
         this.utils = new Utils(this);
         this.updateChecker = new UpdateCheck(this);
+        this.tabListManager = new TabListManager(this);
 
         this.api = new UltimateTeamsAPIImpl(this);
 
@@ -258,6 +262,15 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonU
         // Enable economy features
         if (getServer().getPluginManager().isPluginEnabled("Vault") && getSettings().isEconomyEnabled()) {
             initialize("economy", (plugin) -> this.economyHook = new VaultHook(this));
+        }
+
+        // Initialize EssentialsX hook
+        if (Bukkit.getPluginManager().getPlugin("Essentials") != null) {
+            initialize("essentialsx", (plugin) -> {
+                this.essentialsHook = new EssentialsHook(this);
+                // Register nickname change listener
+                this.getServer().getPluginManager().registerEvents(new EssentialsNicknameChangeEvent(this), this);
+            });
         }
 
         // Start auto invite clear task
@@ -419,6 +432,11 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonU
     @NotNull
     public TeamInviteUtil getTeamInviteUtil() {
         return teamInviteUtil;
+    }
+
+    @NotNull
+    public TabListManager getTabListManager() {
+        return tabListManager;
     }
 
     public FloodgateApi getFloodgateApi() {

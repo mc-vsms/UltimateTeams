@@ -164,6 +164,9 @@ public class TeamInviteSubCommand {
                             String joinMessage = Utils.Color(messagesConfig.getString("team-join-successful")).replace(TEAM_PLACEHOLDER, team.getName());
                             player.sendMessage(joinMessage);
 
+                            // Update tab list for the new member (scheduled internally for Folia compatibility)
+                            plugin.getTabListManager().updatePlayerTabList(player);
+
                             if (!plugin.getSettings().teamJoinAnnounce())
                                 return;
 

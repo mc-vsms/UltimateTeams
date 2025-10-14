@@ -36,6 +36,9 @@ public class PlayerConnectEvent implements Listener {
                 player, plugin.getUsersStorageUtil().getOnlineUserMap().values().stream().map(online -> User.of(online.getUniqueId(), online.getName())).toList()), 40L
         );
 
+        // Update tab list prefix with delay for Folia compatibility
+        plugin.runSyncDelayed(() -> plugin.getTabListManager().updatePlayerTabList(player), 60L);
+
 
         // check if floodgate hook is enabled and available
         if (plugin.getSettings().FloodGateHook() && (plugin.getFloodgateApi() != null)) {
