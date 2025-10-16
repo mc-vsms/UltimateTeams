@@ -4,13 +4,18 @@ import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.network.Message;
 import dev.xf3d3.ultimateteams.network.Payload;
 import dev.xf3d3.ultimateteams.utils.Utils;
+import io.papermc.paper.event.player.AsyncChatEvent;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.jetbrains.annotations.NotNull;
+
+import static net.kyori.adventure.text.Component.text;
 
 public class PlayerChatEvent implements Listener {
     private final UltimateTeams plugin;
@@ -20,34 +25,53 @@ public class PlayerChatEvent implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    public void onPlayerChat(AsyncPlayerChatEvent event) {
+    public void onPlayerChat(AsyncChatEvent event) {
         Player player = event.getPlayer();
 
         // Handle team chat
         if (plugin.getUsersStorageUtil().getChatPlayers().containsKey(player.getUniqueId())) {
             event.setCancelled(true);
-            sendToAlternateChat(player, event.getMessage());
+            // Convert Component to String for team chat
+            String message = LegacyComponentSerializer.legacySection().serialize(event.message());
+            sendToAlternateChat(player, message);
             return;
         }
 
-        // Format regular chat with team prefix
-        plugin.getTeamStorageUtil().findTeamByMember(player.getUniqueId()).ifPresent(team -> {
-            String prefix = team.getPrefix();
-            if (prefix != null && !prefix.isEmpty()) {
-                String coloredPrefix = Utils.Color(prefix);
-
-                // Get player name (nickname if EssentialsX is available)
-                String playerName;
-                if (plugin.getEssentialsHook() != null) {
-                    playerName = plugin.getEssentialsHook().getDisplayName(player);
-                } else {
-                    playerName = player.getName();
-                }
-
-                // Set chat format: [prefix]<username> message
-                // %1$s = player display name, %2$s = message
-                event.setFormat(Utils.Color(coloredPrefix + "&f<" + playerName + "&f> %2$s"));
+        // Use renderer to customize chat format
+        event.renderer((source, sourceDisplayName, message, viewer) -> {
+            // Get player name (nickname if EssentialsX is available)
+            String displayName;
+            if (plugin.getEssentialsHook() != null) {
+                displayName = plugin.getEssentialsHook().getDisplayName(source);
+            } else {
+                displayName = source.getName();
             }
+
+            // Get real player name
+            String realName = source.getName();
+
+            // Start building the message
+            Component result = Component.empty();
+
+            // Check if player is in a team and add prefix if available
+            var teamOptional = plugin.getTeamStorageUtil().findTeamByMember(source.getUniqueId());
+            if (teamOptional.isPresent()) {
+                String prefix = teamOptional.get().getPrefix();
+                if (prefix != null && !prefix.isEmpty()) {
+                    String coloredPrefix = Utils.Color(prefix);
+                    // Add prefix with legacy colors
+                    LegacyComponentSerializer serializer = LegacyComponentSerializer.legacySection();
+                    Component prefixComponent = serializer.deserialize(coloredPrefix);
+                    result = result.append(prefixComponent);
+                }
+            }
+
+            // Add player name with hover event
+            Component playerNameComponent = text("<" + displayName + ">")
+                    .hoverEvent(HoverEvent.showText(text(realName)));
+
+            // Combine: prefix + playerName + space + message
+            return result.append(playerNameComponent).append(text(" ")).append(message);
         });
     }
 

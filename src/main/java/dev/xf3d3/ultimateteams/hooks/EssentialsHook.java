@@ -34,8 +34,8 @@ public class EssentialsHook {
     public String getFormattedNickname(@NotNull Player player) {
         try {
             User user = essentials.getUser(player);
-            if (user != null && user.getNickname() != null) {
-                return user.getFormattedNickname();
+            if (user != null && user.getNick(true, true) != null) {
+                return user.getNick(true, true);
             }
         } catch (Exception e) {
             plugin.log(java.util.logging.Level.WARNING,

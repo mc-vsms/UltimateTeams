@@ -52,7 +52,7 @@ dependencies {
     testAnnotationProcessor("org.projectlombok:lombok:1.18.40")
 
     // Folia and Spigot
-    compileOnly("org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.20.1-R0.1-SNAPSHOT")
     compileOnly("me.clip:placeholderapi:2.11.6")
     compileOnly("org.geysermc.floodgate:api:2.2.4-SNAPSHOT")
     compileOnly("net.essentialsx:EssentialsX:2.20.1") {
@@ -107,7 +107,7 @@ tasks {
         relocate("org.json", "dev.xf3d3.ultimateteams.libraries.json")
         relocate("de.themoep", "dev.xf3d3.ultimateteams.libraries.inventorygui")
         relocate("dev.dejvokep", "dev.xf3d3.ultimateteams.libraries.boostedyaml")
-        relocate("net.kyori", "dev.xf3d3.ultimateteams.libraries.kyori")
+        // net.kyori is provided by Paper API, so don't relocate it
         relocate("net.william278.desertwell", "dev.xf3d3.ultimateteams.libraries.william278.desertwell")
         relocate("net.william278.annotaml", "dev.xf3d3.ultimateteams.libraries.william278.annotaml")
     }
